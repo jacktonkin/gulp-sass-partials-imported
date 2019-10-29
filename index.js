@@ -2,6 +2,7 @@
 
 const
     sassGraph = require('sass-graph'),
+    sourcemap = require('vinyl-sourcemap'),
     through = require('through2'),
     vinylFile = require('vinyl-file'),
     isWin = /^win/.test(process.platform);
@@ -30,6 +31,11 @@ function sass_partials_imported(scss_dir, loadPaths) {
             files.forEach( f => {
 
                 if (processedFiles.indexOf(f.path) === -1) {
+                    if (file.sourceMap) {
+                        sourcemap.add(f, (error, updatedFile) => {
+                            f = updatedFile || f;
+                        });
+                    }
                     this.push(f);
                     processedFiles.push(f.path);
                 }
